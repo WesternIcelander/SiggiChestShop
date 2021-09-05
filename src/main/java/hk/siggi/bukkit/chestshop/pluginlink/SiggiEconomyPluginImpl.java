@@ -35,4 +35,9 @@ public class SiggiEconomyPluginImpl extends EconomyPlugin {
 		return SiggiEconomy.getUser(player).withdraw(amount, quantity, info).isSuccessful();
 	}
 
+	@Override
+	public String moneyToString(double amount) {
+		return SiggiEconomy.moneyToString(amount);
+	}
+
 }
