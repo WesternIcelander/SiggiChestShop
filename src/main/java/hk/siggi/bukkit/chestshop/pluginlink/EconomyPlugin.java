@@ -10,12 +10,12 @@ public abstract class EconomyPlugin {
 	public static EconomyPlugin get() {
 		if (instance == null) {
 			if (Bukkit.getPluginManager().getPlugin("SiggiEconomy")!=null) {
-				instance = new SiggiEconomyPluginImpl();
+				instance = new EconomyPluginImplSiggiEconomy();
 			} else {
 				try {
-					instance = new VaultPluginImpl();
+					instance = new EconomyPluginImplVault();
 				} catch (Exception e) {
-					instance = new VaultPluginNullImpl();
+					instance = new EconomyPluginImplNull();
 				}
 			}
 		}

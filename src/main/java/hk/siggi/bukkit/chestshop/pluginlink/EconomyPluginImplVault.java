@@ -7,9 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class VaultPluginImpl extends EconomyPlugin {
+public class EconomyPluginImplVault extends EconomyPlugin {
 
-	VaultPluginImpl() {
+	EconomyPluginImplVault() {
 		economy = null;
 		setupEconomy();
 	}

@@ -3,9 +3,9 @@ package hk.siggi.bukkit.chestshop.pluginlink;
 import io.siggi.economy.SiggiEconomy;
 import java.util.UUID;
 
-public class SiggiEconomyPluginImpl extends EconomyPlugin {
+public class EconomyPluginImplSiggiEconomy extends EconomyPlugin {
 
-	public SiggiEconomyPluginImpl() {
+	public EconomyPluginImplSiggiEconomy() {
 	}
 
 	@Override

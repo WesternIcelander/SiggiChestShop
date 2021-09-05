@@ -2,9 +2,9 @@ package hk.siggi.bukkit.chestshop.pluginlink;
 
 import java.util.UUID;
 
-public class VaultPluginNullImpl extends EconomyPlugin {
+public class EconomyPluginImplNull extends EconomyPlugin {
 
-	public VaultPluginNullImpl() {
+	public EconomyPluginImplNull() {
 	}
 
 	@Override
