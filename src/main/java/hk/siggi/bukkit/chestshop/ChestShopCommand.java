@@ -1,5 +1,6 @@
 package hk.siggi.bukkit.chestshop;
 
+import hk.siggi.bukkit.chestshop.pluginlink.EconomyPlugin;
 import hk.siggi.bukkit.chestshop.shop.Shop;
 import java.io.File;
 import java.util.ArrayList;
@@ -164,9 +165,9 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 				it.remove();
 			}
 		}
-		lore.add("BuyCost: $" + ChestShop.doubleToString(buy));
+		lore.add("BuyCost: " + EconomyPlugin.get().moneyToString(buy));
 		if (sell > 0.0) {
-			lore.add("SellVal: $" + ChestShop.doubleToString(sell));
+			lore.add("SellVal: " + EconomyPlugin.get().moneyToString(sell));
 		}
 		meta.setLore(lore);
 		stack.setItemMeta(meta);

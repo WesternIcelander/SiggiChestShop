@@ -129,7 +129,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 		ItemStack stack = new ItemStack(Material.DIAMOND, 1);
 		ItemMeta meta = stack.getItemMeta();
 		String colourCode = new String(new char[]{(char) 0xA7});
-		meta.setDisplayName(colourCode + "rYou currently have: " + colourCode + "6$" + doubleToString(money) + "");
+		meta.setDisplayName(colourCode + "rYou currently have: " + colourCode + "6" + EconomyPlugin.get().moneyToString(money) + "");
 		List<String> lore = new ArrayList<>();
 		lore.add(colourCode + "r");
 		lore.add(colourCode + "rTo buy an item, move it to your inventory.");
@@ -144,26 +144,6 @@ public class ChestShop extends JavaPlugin implements Listener {
 		tag.setByte("HideFlags", (byte) 63);
 		util.setTag(stack, tag);
 		return stack;
-	}
-
-	public static String doubleToString(double money) {
-		String moneyAsString = Double.toString(Math.round(money * 100.0) / 100.0);
-		int dotPosition = moneyAsString.indexOf(".");
-		if (dotPosition == -1) {
-			return moneyAsString;
-		}
-		String beforeDot = moneyAsString.substring(0, dotPosition);
-		String afterDot = moneyAsString.substring(dotPosition + 1);
-		if (afterDot.length() == 0) {
-			afterDot = afterDot + "00";
-		}
-		if (afterDot.length() == 1) {
-			afterDot = afterDot + "0";
-		}
-		if (afterDot.equals("00")) {
-			return beforeDot;
-		}
-		return beforeDot + "." + afterDot;
 	}
 
 	public Shop loadShop(String shop) {
@@ -268,9 +248,9 @@ public class ChestShop extends JavaPlugin implements Listener {
 					ItemStack stack = item.getBaseStack();
 					ItemMeta meta = stack.getItemMeta();
 					List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
-					lore.add("BuyCost: $" + doubleToString(item.buyPrice));
+					lore.add("BuyCost: " + EconomyPlugin.get().moneyToString(item.buyPrice));
 					if (shop.allowSelling && item.sellPrice > 0.0) {
-						lore.add("SellVal: $" + doubleToString(item.sellPrice));
+						lore.add("SellVal: " + EconomyPlugin.get().moneyToString(item.sellPrice));
 					}
 					meta.setLore(lore);
 					stack.setItemMeta(meta);
@@ -758,7 +738,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 		if (lore == null) {
 			lore = new ArrayList<String>();
 		}
-		lore.add("Sell Value: $" + doubleToString(value));
+		lore.add("Sell Value: " + EconomyPlugin.get().moneyToString(value));
 		meta.setLore(lore);
 		stack.setItemMeta(meta);
 	}

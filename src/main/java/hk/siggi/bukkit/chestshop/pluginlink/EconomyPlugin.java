@@ -31,4 +31,24 @@ public abstract class EconomyPlugin {
 
 	public abstract boolean withdraw(double amount, long quantity, UUID player, String info);
 
+	public String moneyToString(double amount) {
+		String moneyAsString = Double.toString(Math.round(amount * 100.0) / 100.0);
+		int dotPosition = moneyAsString.indexOf(".");
+		if (dotPosition == -1) {
+			return moneyAsString;
+		}
+		String beforeDot = moneyAsString.substring(0, dotPosition);
+		String afterDot = moneyAsString.substring(dotPosition + 1);
+		if (afterDot.length() == 0) {
+			afterDot = afterDot + "00";
+		}
+		if (afterDot.length() == 1) {
+			afterDot = afterDot + "0";
+		}
+		if (afterDot.equals("00")) {
+			return beforeDot;
+		}
+		return "$" + beforeDot + "." + afterDot;
+	}
+
 }

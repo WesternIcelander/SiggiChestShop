@@ -1,8 +1,9 @@
 package hk.siggi.bukkit.chestshop.shop;
 
-import hk.siggi.bukkit.chestshop.ChestShop;
 import java.util.ArrayList;
 import java.util.List;
+
+import hk.siggi.bukkit.chestshop.pluginlink.EconomyPlugin;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -21,7 +22,7 @@ public class ShopItem {
 		if (lore == null) {
 			lore = new ArrayList<>();
 		}
-		lore.add("Cost: $" + ChestShop.doubleToString(buyPrice));
+		lore.add("Cost: " + EconomyPlugin.get().moneyToString(buyPrice));
 		itemMeta.setLore(lore);
 		clone.setItemMeta(itemMeta);
 		return clone;
