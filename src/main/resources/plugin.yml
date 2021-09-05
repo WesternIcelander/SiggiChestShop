@@ -1,0 +1,16 @@
+name: SiggiChestShop
+main: hk.siggi.bukkit.chestshop.ChestShop
+version: 1.0
+author: Siggi
+description: A ChestShop shop.
+depend: [NBTTool]
+softdepend: [ChestShop,SiggiEconomy,Vault]
+api-version: 1.13
+permissions:
+    hk.siggi.bukkit.scs.admin:
+        description: Allow creating ChestShops.
+        default: op
+commands:
+    scs:
+        description: SiggiChestShop commands.
+        usage: /<command>
