@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
+
+import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -248,9 +250,9 @@ public class ChestShop extends JavaPlugin implements Listener {
 					ItemStack stack = item.getBaseStack();
 					ItemMeta meta = stack.getItemMeta();
 					List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
-					lore.add("BuyCost: " + EconomyPlugin.get().moneyToString(item.buyPrice));
+					lore.add("BuyCost: " + Double.toString(item.buyPrice));
 					if (shop.allowSelling && item.sellPrice > 0.0) {
-						lore.add("SellVal: " + EconomyPlugin.get().moneyToString(item.sellPrice));
+						lore.add("SellVal: " + Double.toString(item.sellPrice));
 					}
 					meta.setLore(lore);
 					stack.setItemMeta(meta);
@@ -289,10 +291,10 @@ public class ChestShop extends JavaPlugin implements Listener {
 				List<String> lore = meta.getLore();
 				for (String l : lore) {
 					try {
-						if (l.startsWith("BuyCost: $")) {
-							buy = Double.parseDouble(l.substring(10));
-						} else if (l.startsWith("SellVal: $")) {
-							sell = Double.parseDouble(l.substring(10));
+						if (l.startsWith("BuyCost: ")) {
+							buy = Double.parseDouble(l.substring(9));
+						} else if (l.startsWith("SellVal: ")) {
+							sell = Double.parseDouble(l.substring(9));
 						}
 					} catch (Exception e) {
 					}
@@ -413,39 +415,30 @@ public class ChestShop extends JavaPlugin implements Listener {
 						}
 						if (stack != null) {
 							ItemStack originalItem = stack.clone();
-							boolean allowBuying = true;
+							boolean allowBuying = false;
 							double money = 0;
-							ItemMeta meta = stack.getItemMeta();
 							String linkStore = null;
-							String itemDisplayName = meta.getDisplayName();
-							if (itemDisplayName != null) {
-								if (ChatColor.stripColor(itemDisplayName).equalsIgnoreCase("Information")) {
-									allowBuying = false;
-								}
-							}
-							List lore = meta.getLore();
-							if (lore != null) {
-								String[] loreStrings = (String[]) lore.toArray(new String[lore.size()]);
-								for (int i = 0; i < loreStrings.length; i++) {
-									if (loreStrings[i].startsWith("Cost: $")) {
-										money = Double.parseDouble(loreStrings[i].substring(7));
-										lore.remove(loreStrings[i]);
-									}
-									if (loreStrings[i].startsWith(">>")) {
-										linkStore = loreStrings[i].substring(2);
-										lore.remove(loreStrings[i]);
-									}
-									if (loreStrings[i].startsWith("Sell Value: ")) {
+							NBTCompound itemTag = NBTTool.getUtil().getTag(stack);
+							if (itemTag != null) {
+								NBTCompound siggiChestShopTag = itemTag.getCompound("SiggiChestShop");
+								if (siggiChestShopTag != null && siggiChestShopTag.size() != 0) {
+									allowBuying = siggiChestShopTag.getInt("allowBuying") > 0;
+									money = siggiChestShopTag.getDouble("cost");
+									linkStore = siggiChestShopTag.getString("link");
+									if (linkStore != null && linkStore.isEmpty())
+										linkStore = null;
+									ItemStack origItem = unwrap(stack);
+									if (origItem == null) {
 										allowBuying = false;
+									} else {
+										stack = origItem;
 									}
 								}
-								if (lore.isEmpty()) {
-									lore = null;
-								}
-								meta.setLore(lore);
 							}
+							ItemMeta meta = stack.getItemMeta();
+							String itemDisplayName = meta.getDisplayName();
 							String itemName = NBTTool.getUtil().getItemName(stack);
-							if (itemDisplayName != null) {
+							if (itemDisplayName != null && !itemDisplayName.isEmpty()) {
 								itemName = itemDisplayName + " (" + itemName + ")";
 							}
 							if (linkStore != null) {
@@ -473,7 +466,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 									sellPrice = sellableItem.value;
 								}
 								if (sellPrice > 0.0) {
-									addSellLore(stack, sellPrice);
+									stack = addSellLore(stack, sellPrice);
 								}
 								event.setCurrentItem(stack);
 								if (rightClickWorkaround) {
@@ -681,7 +674,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 			SellableItem sellableItem = info.getItem(stack);
 			if (sellableItem != null) {
 				double value = sellableItem.value;
-				addSellLore(stack, value);
+				stack = addSellLore(stack, value);
 				items[i] = stack;
 				didChange = true;
 			}
@@ -703,26 +696,8 @@ public class ChestShop extends JavaPlugin implements Listener {
 			if (stack.getType() == Material.AIR) {
 				continue;
 			}
-			ItemMeta meta = stack.getItemMeta();
-			List<String> lore = meta.getLore();
-			if (lore == null) {
-				continue;
-			}
-			boolean didChangeLore = false;
-			for (int j = 0; j < lore.size(); j++) {
-				String loreLine = lore.get(j);
-				if (loreLine.startsWith("Sell Value: ")) {
-					lore.remove(j);
-					j -= 1;
-					didChangeLore = true;
-				}
-			}
-			if (didChangeLore) {
-				if (lore.isEmpty()) {
-					lore = null;
-				}
-				meta.setLore(lore);
-				stack.setItemMeta(meta);
+			stack = unwrap(stack);
+			if (stack != null) {
 				items[i] = stack;
 				didChange = true;
 			}
@@ -732,7 +707,8 @@ public class ChestShop extends JavaPlugin implements Listener {
 		}
 	}
 
-	public void addSellLore(ItemStack stack, double value) {
+	public ItemStack addSellLore(ItemStack stack, double value) {
+		NBTCompound originalItem = NBTTool.getUtil().itemToNBT(stack);
 		ItemMeta meta = stack.getItemMeta();
 		List<String> lore = meta.getLore();
 		if (lore == null) {
@@ -741,6 +717,13 @@ public class ChestShop extends JavaPlugin implements Listener {
 		lore.add("Sell Value: " + EconomyPlugin.get().moneyToString(value));
 		meta.setLore(lore);
 		stack.setItemMeta(meta);
+		NBTCompound tag = NBTTool.getUtil().getTag(stack);
+		NBTCompound siggiChestShopTag = NBTTool.getUtil().newCompound();
+		siggiChestShopTag.setDouble("sellValue", value);
+		siggiChestShopTag.setCompound("originalItem", originalItem);
+		tag.setCompound("SiggiChestShop", siggiChestShopTag);
+		stack = NBTTool.getUtil().setTag(stack, tag);
+		return stack;
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -893,5 +876,18 @@ public class ChestShop extends JavaPlugin implements Listener {
 		itemMeta.setLore(lore);
 		stack.setItemMeta(itemMeta);
 		player.getInventory().addItem(stack);
+	}
+
+	public static ItemStack unwrap(ItemStack item) {
+		NBTCompound tag = NBTTool.getUtil().getTag(item);
+		if (tag == null)
+			return null;
+		NBTCompound siggiChestShopTag = tag.getCompound("SiggiChestShop");
+		if (siggiChestShopTag == null || siggiChestShopTag.size() == 0)
+			return null;
+		NBTCompound originalItem = siggiChestShopTag.getCompound("originalItem");
+		if (originalItem == null || originalItem.size() == 0)
+			return null;
+		return NBTTool.getUtil().itemFromNBT(originalItem);
 	}
 }

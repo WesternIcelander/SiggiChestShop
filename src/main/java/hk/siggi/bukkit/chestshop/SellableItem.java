@@ -16,25 +16,6 @@ public class SellableItem {
 	}
 
 	public boolean matches(ItemStack stack) {
-		ItemMeta meta = stack.getItemMeta();
-		if (meta.hasLore()) {
-			boolean didRemove = false;
-			List<String> lore = meta.getLore();
-			for (Iterator<String> it = lore.iterator(); it.hasNext();) {
-				String str = it.next();
-				if (str.startsWith("Sell Value: ")) {
-					it.remove();
-					didRemove = true;
-				}
-			}
-			if (didRemove) {
-				if (lore.isEmpty()) {
-					lore = null;
-				}
-				meta.setLore(lore);
-				stack.setItemMeta(meta);
-			}
-		}
 		return item.isSimilar(stack);
 	}
 }

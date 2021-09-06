@@ -16,6 +16,9 @@ public class ShopInfo {
 	public ShopInfo() {
 	}
 	public SellableItem getItem(ItemStack stack) {
+		ItemStack unwrapped = ChestShop.unwrap(stack);
+		if (unwrapped != null)
+			stack = unwrapped;
 		for (SellableItem item : sellableItems) {
 			if (item.matches(stack)) {
 				return item;

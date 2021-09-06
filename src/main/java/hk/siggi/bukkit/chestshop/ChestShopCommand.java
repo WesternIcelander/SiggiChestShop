@@ -165,9 +165,11 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 				it.remove();
 			}
 		}
-		lore.add("BuyCost: " + EconomyPlugin.get().moneyToString(buy));
+		if (buy > 0.0) {
+			lore.add("BuyCost: " + Double.toString(buy));
+		}
 		if (sell > 0.0) {
-			lore.add("SellVal: " + EconomyPlugin.get().moneyToString(sell));
+			lore.add("SellVal: " + Double.toString(sell));
 		}
 		meta.setLore(lore);
 		stack.setItemMeta(meta);
