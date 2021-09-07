@@ -141,6 +141,10 @@ public class ChestShop extends JavaPlugin implements Listener {
 		List<String> lore = new ArrayList<>();
 		lore.add(colourCode + "r");
 		lore.add(colourCode + "rTo buy an item, move it to your inventory.");
+		lore.add(colourCode + "rLeft click = buy 1");
+		lore.add(colourCode + "rRight click = buy 64");
+		lore.add(colourCode + "rShift+left click = buy 64 faster");
+		lore.add(colourCode + "r");
 		if (allowSelling) {
 			lore.add(colourCode + "rTo sell an item, move it to the shop.");
 		}
@@ -150,7 +154,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 		NBTUtil util = NBTTool.getUtil();
 		NBTCompound tag = util.getTag(stack);
 		tag.setByte("HideFlags", (byte) 63);
-		util.setTag(stack, tag);
+		stack = util.setTag(stack, tag);
 		return stack;
 	}
 
