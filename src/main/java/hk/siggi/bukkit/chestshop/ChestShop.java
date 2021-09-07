@@ -275,7 +275,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 
 	public void closedShopEditor(Player player, Inventory inventory, String shopName, Shop shop) {
 		shop.items.clear();
-		shop.allowSelling = false;
+		boolean shownSellDisabledWarning = false;
 		for (int i = 1; i < shop.storeSize * 9; i++) {
 			ItemStack item = inventory.getItem(i);
 			if (item == null || item.getType() == Material.AIR) {
@@ -299,8 +299,10 @@ public class ChestShop extends JavaPlugin implements Listener {
 					}
 				}
 			}
-			if (sell > 0.0) {
-				shop.allowSelling = true;
+			if (sell > 0.0 && !shop.allowSelling && !shownSellDisabledWarning) {
+				shownSellDisabledWarning = true;
+				player.sendMessage(ChatColor.RED + "One or more items in this shop have a sell value, but selling is disabled for this shop!");
+				player.sendMessage(ChatColor.RED + "To enable selling, type " + ChatColor.AQUA + "/scs setallowselling " + shopName + " true");
 			}
 			shopItem.base = cleanItem(item, true);
 			shopItem.buyPrice = buy;

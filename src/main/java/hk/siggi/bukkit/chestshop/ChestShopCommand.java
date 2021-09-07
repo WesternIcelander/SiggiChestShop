@@ -18,6 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import static hk.siggi.bukkit.chestshop.Util.parseBoolean;
+
 public class ChestShopCommand implements CommandExecutor, TabExecutor {
 
 	private final ChestShop plugin;
@@ -86,6 +88,12 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 				sender.sendMessage("Minimum size is 1!");
 				return true;
 			}
+			ChestShop.getInstance().saveShop(shopN, shop);
+		}
+		if (split[0].equalsIgnoreCase("setallowselling")) {
+			String shopN = split[1];
+			Shop shop = ChestShop.getInstance().loadShop(shopN);
+			shop.allowSelling = parseBoolean(split[2]);
 			ChestShop.getInstance().saveShop(shopN, shop);
 		}
 		if (split[0].equalsIgnoreCase("open")) {
@@ -188,6 +196,7 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 			addSuggestion.accept("createshop");
 			addSuggestion.accept("setname");
 			addSuggestion.accept("setsize");
+			addSuggestion.accept("setallowselling");
 			addSuggestion.accept("open");
 			addSuggestion.accept("item");
 			addSuggestion.accept("edit");
@@ -208,6 +217,11 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 						n = n.substring(0, n.length() - 5);
 						addSuggestion.accept(n);
 					}
+				}
+				break;
+				case "setallowselling": {
+					addSuggestion.accept("yes");
+					addSuggestion.accept("no");
 				}
 				break;
 			}
