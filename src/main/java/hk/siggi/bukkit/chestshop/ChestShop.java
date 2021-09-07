@@ -573,30 +573,23 @@ public class ChestShop extends JavaPlugin implements Listener {
 					if (stack == null || stack.getType() == Material.AIR) {
 						continue;
 					}
-					ItemMeta meta = stack.getItemMeta();
-					List<String> lores = meta.getLore();
-					double itemValue = 0.0;
-					if (lores != null) {
-						for (String lore : lores) {
-							if (lore.startsWith("Sell Value: $")) {
-								itemValue = (Double.parseDouble(lore.substring(13)));
-							}
-						}
-					} else {
-						SellableItem item = shop.getItem(stack);
-						if (item != null) {
-							itemValue = item.value;
-						}
-					}
+					NBTCompound tag = NBTTool.getUtil().getTag(stack);
+					if (tag == null)
+						continue;
+					NBTCompound siggiChestShop = tag.getCompound("SiggiChestShop");
+					if (siggiChestShop == null || siggiChestShop.size() == 0)
+						continue;
+					double itemValue = tag.getDouble("sellValue");
 					if (itemValue <= 0.0) {
 						continue;
 					}
 					contents[i] = null;
 					changed = true;
 					try {
+						ItemMeta meta = stack.getItemMeta();
 						String itemDisplayName = meta.getDisplayName();
 						String itemName = NBTTool.getUtil().getItemName(stack);
-						if (itemDisplayName != null) {
+						if (itemDisplayName != null && !itemDisplayName.isEmpty()) {
 							itemName = itemDisplayName + " (" + itemName + ")";
 						}
 						giveMoney(p.getUniqueId(), itemValue, stack.getAmount(), "Sold " + itemName);
