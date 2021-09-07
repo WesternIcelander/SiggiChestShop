@@ -1,7 +1,5 @@
 package hk.siggi.bukkit.chestshop;
 
-import static hk.siggi.bukkit.chestshop.ReflectionUtil.getMethod;
-import static hk.siggi.bukkit.chestshop.ReflectionUtil.setInt;
 import hk.siggi.bukkit.chestshop.pluginlink.ClassicChestShop;
 import hk.siggi.bukkit.chestshop.pluginlink.EconomyPlugin;
 import hk.siggi.bukkit.chestshop.pluginlink.ValuePlugin;
@@ -13,9 +11,6 @@ import hk.siggi.bukkit.nbt.NBTUtil;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -228,26 +223,6 @@ public class ChestShop extends JavaPlugin implements Listener {
 			info.topInventory = inventory;
 			currentlyOpenShops.put(player, info);
 			addLores(player, info);
-			if (chest != null) {
-				openChest(chest, player);
-			}
-			if (info.chest != null) {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if (finalShopInfo.closed || currentlyOpenShops.get(player) != finalShopInfo) {
-							cancel();
-							return;
-						}
-						try {
-							Object tileEntity = getTileEntity(finalShopInfo.chest);
-							setInt(tileEntity, "viewingCount", 1);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}.runTaskTimer(this, 1L, 1L);
-			}
 		}
 	}
 
@@ -343,46 +318,6 @@ public class ChestShop extends JavaPlugin implements Listener {
 
 	File getShopFile(String shopName) {
 		return new File(getDataFolder(), shopName + ".json");
-	}
-
-	public void openChest(Chest chest, Player p) {
-		call(chest, p, "startOpen");
-	}
-
-	public void closeChest(Chest chest, Player p) {
-		call(chest, p, "closeContainer");
-	}
-
-	private void call(Chest chest, Player p, String method) {
-		try {
-			Object obj = getTileEntity(chest);
-			if (obj == null) {
-				return;
-			}
-			Object nmsPlayer = getNMSPlayer(p);
-			Class nmsHumanEntity = nmsPlayer.getClass().getSuperclass();
-			Method methodToCall = getMethod(obj.getClass(), method, nmsHumanEntity);
-			methodToCall.setAccessible(true);
-			methodToCall.invoke(obj, nmsPlayer);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private Object getTileEntity(Chest c) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Method getTileEntity = getMethod(c.getClass(), "getTileEntity");
-		getTileEntity.setAccessible(true);
-		return getTileEntity.invoke(c);
-	}
-
-	private Object getNMSPlayer(Player p) throws IllegalAccessException {
-		try {
-			Field entityField = p.getClass().getSuperclass().getSuperclass().getSuperclass().getDeclaredField("entity");
-			entityField.setAccessible(true);
-			return entityField.get(p);
-		} catch (NoSuchFieldException ex) {
-			throw new RuntimeException(ex);
-		}
 	}
 
 	public ShopInfo getCurrentShop(Player player) {
@@ -648,7 +583,6 @@ public class ChestShop extends JavaPlugin implements Listener {
 			ShopInfo shop = currentlyOpenShops.get(p);
 			if (shop != null) {
 				if (shop.chest != null) {
-					closeChest(shop.chest, p);
 					shop.chest = null;
 				}
 			}
