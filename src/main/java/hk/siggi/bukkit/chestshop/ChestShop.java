@@ -603,7 +603,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 					NBTCompound siggiChestShop = tag.getCompound("SiggiChestShop");
 					if (siggiChestShop == null || siggiChestShop.size() == 0)
 						continue;
-					double itemValue = tag.getDouble("sellValue");
+					double itemValue = siggiChestShop.getDouble("sellValue");
 					if (itemValue <= 0.0) {
 						continue;
 					}
