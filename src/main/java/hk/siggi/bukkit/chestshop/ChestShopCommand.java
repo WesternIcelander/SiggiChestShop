@@ -206,6 +206,7 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 			switch (args[0]) {
 				case "setname":
 				case "setsize":
+				case "setallowselling":
 				case "open":
 				case "item":
 				case "edit": {
@@ -219,11 +220,6 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 					}
 				}
 				break;
-				case "setallowselling": {
-					addSuggestion.accept("yes");
-					addSuggestion.accept("no");
-				}
-				break;
 			}
 		} else if (args.length == 3) {
 			switch (args[0]) {
@@ -234,6 +230,11 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 					addSuggestion.accept("4");
 					addSuggestion.accept("5");
 					addSuggestion.accept("6");
+				}
+				break;
+				case "setallowselling": {
+					addSuggestion.accept("yes");
+					addSuggestion.accept("no");
 				}
 				break;
 			}
