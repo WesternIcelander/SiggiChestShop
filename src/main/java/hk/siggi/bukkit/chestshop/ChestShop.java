@@ -4,6 +4,7 @@ import static hk.siggi.bukkit.chestshop.ReflectionUtil.getMethod;
 import static hk.siggi.bukkit.chestshop.ReflectionUtil.setInt;
 import hk.siggi.bukkit.chestshop.pluginlink.ClassicChestShop;
 import hk.siggi.bukkit.chestshop.pluginlink.EconomyPlugin;
+import hk.siggi.bukkit.chestshop.pluginlink.ValuePlugin;
 import hk.siggi.bukkit.chestshop.shop.Shop;
 import hk.siggi.bukkit.chestshop.shop.ShopItem;
 import hk.siggi.bukkit.nbt.NBTCompound;
@@ -67,6 +68,12 @@ public class ChestShop extends JavaPlugin implements Listener {
 	private final WeakHashMap<Player, ShopInfo> currentlyOpenShops = new WeakHashMap<>();
 	private boolean checkedCTShop = false;
 	private boolean hasCubeTokensShop = false;
+
+	private double sellPortion = 0.85;
+
+	public double getSellPortion() {
+		return sellPortion;
+	}
 
 	@Override
 	public void onLoad() {
@@ -179,6 +186,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 		ShopInfo info = null;
 		try {
 			Shop theShopInfo = loadShop(shop);
+			fillInPrices(theShopInfo);
 			inventory = getServer().createInventory(player, 9 * theShopInfo.storeSize, theShopInfo.storeName);
 			inventory.setItem(0, createMoneyLeftItemStack(getBalance(player.getUniqueId()), theShopInfo.allowSelling));
 			info = new ShopInfo();
@@ -235,6 +243,18 @@ public class ChestShop extends JavaPlugin implements Listener {
 						}
 					}
 				}.runTaskTimer(this, 1L, 1L);
+			}
+		}
+	}
+
+	private void fillInPrices(Shop theShopInfo) {
+		for (ShopItem item : theShopInfo.items) {
+			double value = ValuePlugin.get().getValue(item.getBaseStack());
+			if (item.buyPrice == 0.0) {
+				item.buyPrice = Util.buyPrice(value);
+			}
+			if (item.sellPrice == 0.0) {
+				item.sellPrice = Util.sellPrice(value);
 			}
 		}
 	}
