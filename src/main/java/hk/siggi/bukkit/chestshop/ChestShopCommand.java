@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import hk.siggi.bukkit.chestshop.shop.ShopItem;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -94,6 +96,14 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 			String shopN = split[1];
 			Shop shop = ChestShop.getInstance().loadShop(shopN);
 			shop.allowSelling = parseBoolean(split[2]);
+			ChestShop.getInstance().saveShop(shopN, shop);
+		}
+		if (split[0].equalsIgnoreCase("removeprices")) {
+			String shopN = split[1];
+			Shop shop = ChestShop.getInstance().loadShop(shopN);
+			for (ShopItem item : shop.items) {
+				item.buyPrice = item.sellPrice = 0.0;
+			}
 			ChestShop.getInstance().saveShop(shopN, shop);
 		}
 		if (split[0].equalsIgnoreCase("open")) {
@@ -197,6 +207,7 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 			addSuggestion.accept("setname");
 			addSuggestion.accept("setsize");
 			addSuggestion.accept("setallowselling");
+			addSuggestion.accept("removeprices");
 			addSuggestion.accept("open");
 			addSuggestion.accept("item");
 			addSuggestion.accept("edit");
@@ -207,6 +218,7 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 				case "setname":
 				case "setsize":
 				case "setallowselling":
+				case "removeprices":
 				case "open":
 				case "item":
 				case "edit": {
