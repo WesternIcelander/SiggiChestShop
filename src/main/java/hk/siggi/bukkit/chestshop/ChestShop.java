@@ -831,6 +831,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 	}
 
 	public static ItemStack unwrap(ItemStack item) {
+		int amount = item.getAmount();
 		NBTCompound tag = NBTTool.getUtil().getTag(item);
 		if (tag == null)
 			return null;
@@ -840,6 +841,8 @@ public class ChestShop extends JavaPlugin implements Listener {
 		NBTCompound originalItem = siggiChestShopTag.getCompound("originalItem");
 		if (originalItem == null || originalItem.size() == 0)
 			return null;
-		return NBTTool.getUtil().itemFromNBT(originalItem);
+		ItemStack unwrappedItem = NBTTool.getUtil().itemFromNBT(originalItem);
+		unwrappedItem.setAmount(amount);
+		return unwrappedItem;
 	}
 }
