@@ -65,8 +65,8 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 				shop.storeSize = 6;
 				ChestShop.getInstance().saveShop(shopN, shop);
 				sender.sendMessage("Shop " + shopN + " created!");
-				sender.sendMessage("Set it's display name with /scs setname " + shopN + " [newname]");
-				sender.sendMessage("Set it's size with /scs setsize " + shopN + " [rowcount]");
+				sender.sendMessage("Set its display name with /scs setname " + shopN + " [newname]");
+				sender.sendMessage("Set its size with /scs setsize " + shopN + " [rowcount]");
 				sender.sendMessage("Put it in a chest to make that chest the chest shop!");
 				sender.sendMessage("Right click the chest while in creative mode to edit it!");
 				ChestShop.getInstance().givePaper(player, shopN);
