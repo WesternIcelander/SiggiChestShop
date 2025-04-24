@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import hk.siggi.bukkit.chestshop.pluginlink.EconomyPlugin;
-import hk.siggi.bukkit.nbt.NBTCompound;
-import hk.siggi.bukkit.nbt.NBTTool;
+import io.siggi.nbt.NBTCompound;
+import io.siggi.nbt.NBTTool;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
