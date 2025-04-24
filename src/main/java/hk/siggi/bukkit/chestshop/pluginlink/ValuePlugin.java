@@ -18,5 +18,7 @@ public abstract class ValuePlugin {
 		return instance;
 	}
 
+	public abstract void setValue(ItemStack item, double amount);
+
 	public abstract double getValue(ItemStack item);
 }
