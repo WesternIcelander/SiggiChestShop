@@ -53,6 +53,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class ChestShop extends JavaPlugin implements Listener {
 
 	private static ChestShop instance;
+	private static final String colourCode = new String(new char[]{(char) 0xA7});
 
 	public static ChestShop getInstance() {
 		return instance;
@@ -131,7 +132,6 @@ public class ChestShop extends JavaPlugin implements Listener {
 	public ItemStack createMoneyLeftItemStack(double money, boolean allowSelling) {
 		ItemStack stack = new ItemStack(Material.DIAMOND, 1);
 		ItemMeta meta = stack.getItemMeta();
-		String colourCode = new String(new char[]{(char) 0xA7});
 		meta.setDisplayName(colourCode + "rYou currently have: " + colourCode + "6" + EconomyPlugin.get().moneyToString(money) + "");
 		List<String> lore = new ArrayList<>();
 		lore.add(colourCode + "r");
@@ -175,7 +175,6 @@ public class ChestShop extends JavaPlugin implements Listener {
 	}
 
 	public void openShop(final Player player, String shop, Chest chest) {
-		String colourCode = new String(new char[]{(char) 0xA7});
 		File tokenShop = getShopFile(shop);
 		if (!tokenShop.exists()) {
 			player.sendMessage(ChatColor.RED + "An error has occurred. (shop file missing)");
