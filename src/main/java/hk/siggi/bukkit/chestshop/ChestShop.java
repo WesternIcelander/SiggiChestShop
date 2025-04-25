@@ -11,9 +11,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
@@ -58,7 +60,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 	public static ChestShop getInstance() {
 		return instance;
 	}
-	private final ArrayList inventories = new ArrayList();
+	private final Set<Inventory> inventories = new HashSet<>();
 	private final Map<Inventory, Shop> shopEditors = new WeakHashMap<>();
 	private final Map<Inventory, String> shopEditorNames = new WeakHashMap<>();
 	private final WeakHashMap<Player, ShopInfo> currentlyOpenShops = new WeakHashMap<>();
@@ -102,8 +104,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 		// Clear the CubeTokens inventories so people can't steal from them
 		// in the event that the plugin gets disabled while they're in the
 		// CubeTokens shop.
-		Inventory[] inventory = (Inventory[]) inventories.toArray(new Inventory[inventories.size()]);
-		for (Inventory inv : inventory) {
+		for (Inventory inv : inventories) {
 			inv.clear();
 		}
 		inventories.clear();
@@ -573,9 +574,7 @@ public class ChestShop extends JavaPlugin implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void closeInventory(InventoryCloseEvent event) {
 		Inventory inventory = event.getInventory();
-		if (inventories.contains(inventory)) {
-			inventories.remove(inventory);
-		}
+		inventories.remove(inventory);
 		HumanEntity he = event.getPlayer();
 		if (he instanceof Player) {
 			Player p = (Player) he;
